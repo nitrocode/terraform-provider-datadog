@@ -1,9 +1,8 @@
 package datadog
 
 import (
-	"log"
-
 	"errors"
+	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/terraform"
@@ -44,10 +43,30 @@ func Provider() terraform.ResourceProvider {
 	}
 }
 
+type Config struct {
+	ApiKey string
+	AppKey string
+	ApiUrl string
+}
+
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	client := datadog.NewClient(d.Get("api_key").(string), d.Get("app_key").(string))
-	if apiURL := d.Get("api_url").(string); apiURL != "" {
-		client.SetBaseUrl(apiURL)
+	log.Printf("[INFO] NITRO CONFIGURE")
+	cfg := &Config{
+		ApiKey: d.Get("api_key").(string),
+		AppKey: d.Get("app_key").(string),
+		ApiUrl: d.Get("api_url").(string),
+	}
+
+	return cfg, nil
+}
+
+func (c *Config) GetClient() (*datadog.Client, error) {
+	log.Printf("[INFO] NITRO CLIENT")
+	log.Printf(c.ApiKey)
+	log.Printf(c.AppKey)
+	client := datadog.NewClient(c.ApiKey, c.AppKey)
+	if c.ApiUrl != "" {
+		client.SetBaseUrl(c.ApiUrl)
 	}
 	log.Println("[INFO] Datadog client successfully initialized, now validating...")
 
@@ -62,5 +81,5 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 	log.Printf("[INFO] Datadog Client successfully validated.")
 
-	return client, nil
+	return client, err
 }

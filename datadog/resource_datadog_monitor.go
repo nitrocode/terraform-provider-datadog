@@ -241,7 +241,10 @@ func buildMonitorStruct(d *schema.ResourceData) *datadog.Monitor {
 func resourceDatadogMonitorExists(d *schema.ResourceData, meta interface{}) (b bool, e error) {
 	// Exists - This is called to verify a resource still exists. It is called prior to Read,
 	// and lowers the burden of Read to be able to assume the resource exists.
-	client := meta.(*datadog.Client)
+	log.Printf("NITRO EXIST")
+	config := meta.(*Config)
+
+	client, err := config.GetClient()
 
 	i, err := strconv.Atoi(d.Id())
 	if err != nil {
@@ -259,11 +262,13 @@ func resourceDatadogMonitorExists(d *schema.ResourceData, meta interface{}) (b b
 }
 
 func resourceDatadogMonitorCreate(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("NITRO CREATE")
+	config := meta.(*Config)
 
-	client := meta.(*datadog.Client)
+	client, err := config.GetClient()
 
 	m := buildMonitorStruct(d)
-	m, err := client.CreateMonitor(m)
+	m, err = client.CreateMonitor(m)
 	if err != nil {
 		return fmt.Errorf("error updating monitor: %s", err.Error())
 	}
@@ -274,7 +279,10 @@ func resourceDatadogMonitorCreate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceDatadogMonitorRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*datadog.Client)
+	log.Printf("NITRO READ")
+	config := meta.(*Config)
+
+	client, err := config.GetClient()
 
 	i, err := strconv.Atoi(d.Id())
 	if err != nil {
@@ -331,7 +339,10 @@ func resourceDatadogMonitorRead(d *schema.ResourceData, meta interface{}) error 
 }
 
 func resourceDatadogMonitorUpdate(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*datadog.Client)
+	log.Printf("NITRO UPDATE")
+	config := meta.(*Config)
+
+	client, err := config.GetClient()
 
 	m := &datadog.Monitor{}
 
@@ -430,7 +441,10 @@ func resourceDatadogMonitorUpdate(d *schema.ResourceData, meta interface{}) erro
 }
 
 func resourceDatadogMonitorDelete(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*datadog.Client)
+	log.Printf("NITRO DELETE")
+	config := meta.(*Config)
+
+	client, err := config.GetClient()
 
 	i, err := strconv.Atoi(d.Id())
 	if err != nil {
