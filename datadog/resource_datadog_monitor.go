@@ -266,14 +266,17 @@ func resourceDatadogMonitorCreate(d *schema.ResourceData, meta interface{}) erro
 	config := meta.(*Config)
 
 	client, err := config.GetClient()
-
-	m := buildMonitorStruct(d)
-	m, err = client.CreateMonitor(m)
 	if err != nil {
-		return fmt.Errorf("error updating monitor: %s", err.Error())
+		return fmt.Errorf("error logging in: %s", err.Error())
 	}
 
-	d.SetId(strconv.Itoa(m.GetId()))
+	mon := buildMonitorStruct(d)
+	mon, merr := client.CreateMonitor(mon)
+	if merr != nil {
+		return fmt.Errorf("error updating monitor: %s", merr.Error())
+	}
+
+	d.SetId(strconv.Itoa(mon.GetId()))
 
 	return nil
 }
