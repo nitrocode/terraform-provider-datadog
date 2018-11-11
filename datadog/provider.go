@@ -49,17 +49,6 @@ type Config struct {
 	ApiUrl string
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	log.Printf("[INFO] NITRO CONFIGURE")
-	cfg := &Config{
-		ApiKey: d.Get("api_key").(string),
-		AppKey: d.Get("app_key").(string),
-		ApiUrl: d.Get("api_url").(string),
-	}
-
-	return cfg, nil
-}
-
 func (c *Config) GetClient() (*datadog.Client, error) {
 	log.Printf("[INFO] NITRO CLIENT")
 	log.Printf(c.ApiKey)
@@ -82,4 +71,16 @@ func (c *Config) GetClient() (*datadog.Client, error) {
 	log.Printf("[INFO] Datadog Client successfully validated.")
 
 	return client, err
+}
+
+func providerConfigure(d *schema.ResourceData) (interface{}, error) {
+	log.Printf("[INFO] NITRO CONFIGURE")
+	cfg := &Config{
+		ApiKey: d.Get("api_key").(string),
+		AppKey: d.Get("app_key").(string),
+		ApiUrl: d.Get("api_url").(string),
+	}
+	cfg.GetClient()
+
+	return cfg, nil
 }
